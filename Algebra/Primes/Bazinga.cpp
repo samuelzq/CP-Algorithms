@@ -14,19 +14,27 @@
 #include <bits/stdc++.h>
 
 using namespace std;
-const int N = 1000000006;
-vector<bool> is_primes(N, true);
+const int N = 11000000;
+vector<bool> is_primes(N + 1, true);
 vector<long long> primes;
+vector<long long> fpd(N + 1);
 vector<long long> bazinga;
 
 void sieve(void)
 {
 	is_primes[0] = is_primes[1] = false;
 
+	for (int i = 2; i <= N; i++)
+		fpd[i] = i;
+	fpd[1] = 1;
+
 	for (int i = 2; i * i <= N; i++) {
 		if (is_primes[i]) {
-			for (int j = i * i; j <= N; j += i)
+			for (int j = i * i; j <= N; j += i) {
+				if (fpd[j] == j)
+					fpd[j] = i;
 				is_primes[j] = false;
+			}
 		}
 	}
 
@@ -36,35 +44,20 @@ void sieve(void)
 	}
 }
 
-void all_bazinga(void)
-{
-	long long p;
-
-	for (<vector<long long>::iterator it = primes.begin(); it != primes.end(); it++) {
-		for (<vector<long long>::iterator iit = primes.begin(); iit != primes.end(); iit++) {
-	}
-}
 bool check(long long n)
 {
-	int cnt = 0;
-	long long d = 2;
-	long long tmp = n;
+	long long d = n / fpd[n];
+	if (is_primes[n] || !is_primes[d] || fpd[n] == d)
+		return false;
 
-	while (tmp >= d) {
-		if (tmp % d) {
-			d++;
-			continue;
-		}
-		cnt++;
-		tmp /= d;
-	}
-	return cnt == 2 && tmp == 1;
+	return true;
 }
 
 int main(void)
 {
 	int d, cnt = 0;
 
+	sieve();
 	d = 4;
 	while (cnt <= 2000000) {
 		if (check(d)) {
@@ -77,7 +70,7 @@ int main(void)
 	cin >> t;
 	while (t--) {
 		cin >> k;
-		cout << bazinga[k] << '\n';
+		cout << bazinga[k - 1] << '\n';
 	}
 	return 0;
 }
